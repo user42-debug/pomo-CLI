@@ -12,7 +12,7 @@ int main() {
     const int WORK_DURATION = 25 * 60;
     const int BREAK_DURATION = 5 * 60;
     const int TOTAL_DURATION = BREAK_DURATION + WORK_DURATION;
-    const int BAR_WORK = BAR_WIDTH / TOTAL_DURATION * WORK_DURATION;
+    const int BAR_WORK = BAR_WIDTH * WORK_DURATION / TOTAL_DURATION;
 
     for (int i = 1; i <= sessions; i++) {
         cout << "\033[45m(" << i << "/" << sessions << ")\033[0m [";
@@ -24,9 +24,9 @@ int main() {
         while (true) {
             auto now = chrono::steady_clock::now();
             int elapsed = chrono::duration_cast<chrono::seconds>(now - start).count();
-            if (elapsed > TOTAL_DURATION)
+            if (elapsed > TOTAL_DURATION) {
                 break;
-
+            }
             float progress = (float)elapsed / TOTAL_DURATION;
             int filled = progress * BAR_WIDTH;
 
@@ -40,7 +40,7 @@ int main() {
                 cout << "\033[36m-\033[0m";
 
             int remaining = TOTAL_DURATION - elapsed;
-            if (elapsed < WORK_DURATION) remaining = WORK_DURATION - elapsed;
+            if (elapsed <= WORK_DURATION) remaining = WORK_DURATION - elapsed;
             int minutes = remaining / 60;
             int seconds = remaining % 60;
 
@@ -49,7 +49,8 @@ int main() {
                  << (seconds < 10 ? "0" : "") << seconds
                  << "\033[0m" << flush;
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            
+                this_thread::sleep_for(chrono::milliseconds(200));
         }
         cout << "\n";
     }
